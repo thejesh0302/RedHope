@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RedHope</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<nav>
+    <h2>🔴 RedHope</h2>
+    <div>
+        <a href="/">Home</a>
+        <a href="/login">Login</a>
+        <a href="/signup">Sign Up</a>
+    </div>
+</nav>
+
+<hr>
+
+{% block content %}
+{% endblock %}
+
+</body>
+</html>
