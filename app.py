@@ -1,6 +1,8 @@
-from flask import Flask, render_template, request, redirect, session, url_for
+# app.py
+from flask import Flask, render_template, request, redirect, session, url_for, flash
 import sqlite3
 from datetime import datetime
+from database import create_connection
 
 app = Flask(__name__)
 app.secret_key = "redhope_secret_key"
@@ -18,14 +20,14 @@ def signup():
 
     if request.method == 'POST':
 
-        name = request.form['name']
+        name = request.form['full_name']
         email = request.form['email']
         password = request.form['password']
         role = request.form['role']
         phone = request.form['phone']
-        location = request.form['location']
+        location = request.form['city']
 
-        conn = sqlite3.connect('redhope.db')
+        conn = create_connection()
         cursor = conn.cursor()
 
         cursor.execute("SELECT * FROM users WHERE email=?", (email,))
@@ -33,7 +35,8 @@ def signup():
 
         if existing_user:
             conn.close()
-            return "Email already exists"
+            flash("Email already exists")
+            return redirect('/signup')
 
         cursor.execute(
         "INSERT INTO users (full_name,email,password,role,phone,city) VALUES (?,?,?,?,?,?)",
@@ -43,7 +46,8 @@ def signup():
         conn.commit()
         conn.close()
 
-        return "User registered successfully"
+        flash("Registration successful! Please login.")
+        return redirect('/login')
 
     return render_template('signup.html')
 
@@ -53,7 +57,7 @@ def login():
     email = request.form['email']
     password = request.form['password']
 
-    conn = sqlite3.connect('redhope.db')
+    conn = create_connection()
     cursor = conn.cursor()
 
     cursor.execute("SELECT * FROM users WHERE email=? AND password=?", (email,password))
@@ -73,7 +77,8 @@ def login():
         elif user[4] == 'Patient':
             return redirect('/patient_dashboard')
 
-    return "Invalid Email or Password"
+    flash("Invalid Email or Password")
+    return redirect('/login')
 
 @app.route('/donor_dashboard')
 def donor_dashboard():
@@ -101,12 +106,16 @@ def donor_form():
 
         user_id = session['user_id']
         blood_group = request.form.get('blood_group')
-        age = int(request.form.get('age'))
-        weight = float(request.form.get('weight'))
-        hemoglobin = float(request.form.get('hemoglobin'))
         last_donation = request.form.get('last_donation_date')
         medical = request.form.get('medical_conditions')
 
+        try:
+            age = int(request.form.get('age'))
+            weight = float(request.form.get('weight'))
+            hemoglobin = float(request.form.get('hemoglobin'))
+        except (ValueError, TypeError):
+            flash("Age, weight and hemoglobin must be valid numbers")
+            return redirect('/donor_form')
         eligible = True
 
         if age < 18 or age > 65:
@@ -128,14 +137,25 @@ def donor_form():
 
         status = "Eligible" if eligible else "Not Eligible"
 
-        conn = sqlite3.connect('redhope.db')
+        conn = create_connection()
         cursor = conn.cursor()
 
-        cursor.execute("""
-        INSERT INTO donor_details
-        (user_id,blood_group,age,weight,last_donation_date,availability_status,medical_conditions,hemoglobin_level)
-        VALUES (?,?,?,?,?,?,?,?)
-        """,(user_id,blood_group,age,weight,last_donation,status,medical,hemoglobin))
+        cursor.execute("SELECT donor_id FROM donor_details WHERE donor_id = ?", (user_id,))
+        existing = cursor.fetchone()
+
+        if existing:
+            cursor.execute("""
+            UPDATE donor_details
+            SET blood_group=?, age=?, weight=?, last_donation_date=?,
+                availability_status=?, medical_conditions=?, hemoglobin_level=?
+            WHERE donor_id=?
+            """, (blood_group, age, weight, last_donation, status, medical, hemoglobin, user_id))
+        else:
+            cursor.execute("""
+            INSERT INTO donor_details
+            (donor_id, blood_group, age, weight, last_donation_date, availability_status, medical_conditions, hemoglobin_level)
+            VALUES (?,?,?,?,?,?,?,?)
+            """, (user_id, blood_group, age, weight, last_donation, status, medical, hemoglobin))
 
         conn.commit()
         conn.close()
