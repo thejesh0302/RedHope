@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="dashboard">
+    <h1>My Blood Requests</h1>
+    <p>Track your submitted blood requests and find matched donors.</p>
+
+    {% if requests %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Blood Group</th>
+                <th>Units</th>
+                <th>Hospital</th>
+                <th>City</th>
+                <th>Urgency</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in requests %}
+            <tr>
+                <td>{{ r[2] }}</td>
+                <td>{{ r[3] }}</td>
+                <td>{{ r[4] }}</td>
+                <td>{{ r[5] }}</td>
+                <td>{{ r[6] }}</td>
+                <td>{{ r[8] }}</td>
+                <td><a href="/match_donors/{{ r[0] }}" class="btn btn-secondary">Find Donors</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>You have not submitted any blood requests yet.</p>
+    {% endif %}
+
+    <a href="javascript:history.back()" class="logout-link">Back</a>
+</div>
+
+{% endblock %}

@@ -1,12 +1,31 @@
-<!--donor_dashboard.html-->
 {% extends 'base.html' %}
 
 {% block content %}
 
-<h1>Welcome {{ session['name'] }}!</h1>
-<p>You are successfully logged in.</p>
-<a href="/donor_form">Fill Donor Eligibility Form</a>
-<br><br>
-<a href="{{ url_for('logout') }}">Logout</a>
+<div class="dashboard">
+    <h1>Welcome, {{ session['name'] }}! 👋</h1>
+    <p>You are logged in as a <strong>Donor</strong>. What would you like to do today?</p>
+
+    <div class="dashboard-cards">
+
+        <a href="/donor_form" class="dash-card">
+            <h3>🩺 Eligibility Form</h3>
+            <p>Fill or update your donor eligibility details.</p>
+        </a>
+
+        <a href="#" class="dash-card">
+            <h3>🩸 Blood Requests</h3>
+            <p>View available blood requests that match your profile.</p>
+        </a>
+
+        <a href="#" class="dash-card">
+            <h3>📋 Donation History</h3>
+            <p>View your past donation records.</p>
+        </a>
+
+    </div>
+
+    <a href="{{ url_for('logout') }}" class="logout-link">→ Logout</a>
+</div>
 
 {% endblock %}
