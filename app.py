@@ -112,6 +112,8 @@ def donor_form():
         chronic_disease = request.form.get('chronic_disease')
         tattoo_recent = request.form.get('tattoo_recent')
         alcohol_recent = request.form.get('alcohol_recent')
+        available_from = request.form.get('available_from')
+        available_to = request.form.get('available_to')
 
         try:
             age = int(request.form.get('age'))
@@ -165,15 +167,16 @@ def donor_form():
             UPDATE donor_details
             SET blood_group=?, age=?, weight=?, last_donation_date=?,
                 availability_status=?, medical_conditions=?, hemoglobin_level=?,
-                medication=?, chronic_disease=?, tattoo_recent=?, alcohol_recent=?
+                medication=?, chronic_disease=?, tattoo_recent=?, alcohol_recent=?,
+                available_from=?, available_to=?
             WHERE donor_id=?
-            """, (blood_group, age, weight, last_donation, status, medical, hemoglobin, medication, chronic_disease, tattoo_recent, alcohol_recent, user_id))
+            """, (blood_group, age, weight, last_donation, status, medical, hemoglobin, medication, chronic_disease, tattoo_recent, alcohol_recent, available_from, available_to, user_id))
         else:
             cursor.execute("""
             INSERT INTO donor_details
-            (donor_id, blood_group, age, weight, last_donation_date, availability_status, medical_conditions, hemoglobin_level, medication, chronic_disease, tattoo_recent, alcohol_recent)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
-            """, (user_id, blood_group, age, weight, last_donation, status, medical, hemoglobin, medication, chronic_disease, tattoo_recent, alcohol_recent))
+            (donor_id, blood_group, age, weight, last_donation_date, availability_status, medical_conditions, hemoglobin_level, medication, chronic_disease, tattoo_recent, alcohol_recent, available_from, available_to)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+            """, (user_id, blood_group, age, weight, last_donation, status, medical, hemoglobin, medication, chronic_disease, tattoo_recent, alcohol_recent, available_from, available_to))
 
         conn.commit()
         conn.close()
@@ -196,6 +199,7 @@ def blood_request_form():
         hospital = request.form.get('hospital')
         city = request.form.get('city')
         urgency = request.form.get('urgency')
+        required_time = request.form.get('required_time')
 
         try:
             units = int(units)
@@ -208,9 +212,9 @@ def blood_request_form():
 
         cursor.execute("""
         INSERT INTO patient_requests
-        (patient_id, blood_group_needed, units_required, hospital_name, city, urgency_level, status)
-        VALUES (?, ?, ?, ?, ?, ?, 'Pending')
-        """, (patient_id, blood_group, units, hospital, city, urgency))
+        (patient_id, blood_group_needed, units_required, hospital_name, city, urgency_level, status, required_time)
+        VALUES (?, ?, ?, ?, ?, ?, 'Pending', ?)
+        """, (patient_id, blood_group, units, hospital, city, urgency, required_time))
 
         conn.commit()
         conn.close()
@@ -240,19 +244,133 @@ def match_donors(request_id):
     blood_group = blood_request[2]
     city = blood_request[5]
 
+    required_time = blood_request[9]
+
     cursor.execute("""
-        SELECT u.full_name, u.phone, u.city, d.blood_group, d.age, d.weight, d.hemoglobin_level
+        SELECT u.full_name, u.phone, u.city, d.blood_group, d.age, d.weight, d.hemoglobin_level, d.donor_id
         FROM donor_details d
         JOIN users u ON d.donor_id = u.id
         WHERE d.blood_group = ?
         AND u.city = ?
         AND d.availability_status = 'Eligible'
-    """, (blood_group, city))
+        AND d.available_from <= ?
+        AND d.available_to >= ?
+        ORDER BY d.hemoglobin_level DESC
+        LIMIT 5
+    """, (blood_group, city, required_time, required_time))
 
     matched_donors = cursor.fetchall()
     conn.close()
 
-    return render_template('match_donors.html', donors=matched_donors, request=blood_request)
+    donors_list = []
+    for row in matched_donors:
+        donors_list.append({
+            'name': row[0],
+            'phone': row[1],
+            'city': row[2],
+            'blood_group': row[3],
+            'age': row[4],
+            'weight': row[5],
+            'hemoglobin': row[6],
+            'donor_id': row[7]
+        })
+
+    return render_template('match_donors.html', donors=donors_list, request=blood_request)
+
+@app.route('/send_request/<int:request_id>/<int:donor_id>')
+def send_request(request_id, donor_id):
+
+    if 'user_id' not in session or session.get('role') != 'Patient':
+        return redirect('/login')
+
+    conn = create_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM blood_requests WHERE request_id=? AND donor_id=?", (request_id, donor_id))
+    existing = cursor.fetchone()
+
+    if existing:
+        conn.close()
+        flash("You have already sent a request to this donor")
+        return redirect('/my_requests')
+
+    cursor.execute("""
+    INSERT INTO blood_requests (request_id, donor_id, match_status)
+    VALUES (?, ?, 'Pending')
+    """, (request_id, donor_id))
+
+    conn.commit()
+    conn.close()
+
+    flash("Request sent to donor successfully")
+    return redirect('/my_requests')
+
+@app.route('/donor_notifications')
+def donor_notifications():
+
+    if 'user_id' not in session or session.get('role') != 'Donor':
+        return redirect('/login')
+
+    conn = create_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT u.full_name, u.phone, pr.blood_group_needed, pr.units_required,
+               pr.hospital_name, pr.city, pr.urgency_level, pr.request_date,
+               br.match_status, pr.status, br.match_id
+        FROM blood_requests br
+        JOIN patient_requests pr ON br.request_id = pr.request_id
+        JOIN users u ON pr.patient_id = u.id
+        WHERE br.donor_id = ?
+        ORDER BY pr.request_date DESC
+    """, (session['user_id'],))
+
+    notifications = cursor.fetchall()
+    conn.close()
+
+    return render_template('donor_notifications.html', notifications=notifications)
+
+
+@app.route('/respond_request/<int:match_id>/<string:action>')
+def respond_request(match_id, action):
+
+    if 'user_id' not in session or session.get('role') != 'Donor':
+        return redirect('/login')
+
+    conn = create_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM blood_requests WHERE match_id=?", (match_id,))
+    match = cursor.fetchone()
+
+    if not match:
+        conn.close()
+        flash("Request not found")
+        return redirect('/donor_notifications')
+
+    if action == 'accept':
+        cursor.execute("UPDATE blood_requests SET match_status='Accepted' WHERE match_id=?", (match_id,))
+        cursor.execute("UPDATE patient_requests SET status='Fulfilled' WHERE request_id=?", (match[1],))
+        cursor.execute("UPDATE donor_details SET availability_status='Not Available' WHERE donor_id=?", (session['user_id'],))
+
+        cursor.execute("""
+        INSERT INTO donation_history (donor_id, patient_id, hospital_name, units_donated)
+        SELECT br.donor_id, pr.patient_id, pr.hospital_name, pr.units_required
+        FROM blood_requests br
+        JOIN patient_requests pr ON br.request_id = pr.request_id
+        WHERE br.match_id = ?
+        """, (match_id,))
+
+        flash("You have accepted the request. Thank you for donating!")
+
+    elif action == 'reject':
+        cursor.execute("UPDATE blood_requests SET match_status='Rejected' WHERE match_id=?", (match_id,))
+        flash("You have rejected the request.")
+
+    conn.commit()
+    conn.close()
+
+    return redirect('/donor_notifications')
 
 @app.route('/my_requests')
 def my_requests():
@@ -268,6 +386,38 @@ def my_requests():
     conn.close()
 
     return render_template('my_requests.html', requests=requests)
+
+@app.route('/donation_history')
+def donation_history():
+
+    if 'user_id' not in session:
+        return redirect('/login')
+
+    conn = create_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT d.full_name, p.full_name, dh.donation_date, dh.hospital_name, dh.units_donated
+        FROM donation_history dh
+        JOIN users d ON dh.donor_id = d.id
+        JOIN users p ON dh.patient_id = p.id
+        ORDER BY dh.donation_date DESC
+    """)
+
+    rows = cursor.fetchall()
+    conn.close()
+
+    history = []
+    for row in rows:
+        history.append({
+            'donor_name': row[0],
+            'patient_name': row[1],
+            'date': row[2],
+            'hospital': row[3],
+            'units': row[4]
+        })
+
+    return render_template('donation_history.html', history=history)
 
 @app.route('/logout')
 def logout():

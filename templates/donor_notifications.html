@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="dashboard">
+    <h1>Blood Requests for You</h1>
+    <p>Patients who have requested your blood. Accept or reject each request.</p>
+
+    {% if notifications %}
+    <div class="table-wrapper">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Patient</th>
+                <th>Blood Group</th>
+                <th>Units</th>
+                <th>Hospital</th>
+                <th>City</th>
+                <th>Urgency</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for n in notifications %}
+            <tr>
+                <td>{{ n[0] }}</td>
+                <td>{{ n[2] }}</td>
+                <td>{{ n[3] }}</td>
+                <td>{{ n[4] }}</td>
+                <td>{{ n[5] }}</td>
+                <td>{{ n[6] }}</td>
+                <td>{{ n[9] }}</td>
+                <td>
+                    {% if n[9] == 'Pending' %}
+                    <a href="/respond_request/{{ n[10] }}/accept" class="btn btn-primary" style="width:auto; margin-right:6px;">Accept</a>
+                    <a href="/respond_request/{{ n[10] }}/reject" class="btn btn-secondary">Reject</a>
+                    {% else %}
+                    {{ n[9] }}
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    {% else %}
+    <p>No requests received yet.</p>
+    {% endif %}
+
+    <a href="javascript:history.back()" class="logout-link">Back</a>
+</div>
+
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="dashboard">
+    <h1>Donation History</h1>
+    <p>Record of all donations made through RedHope.</p>
+
+    {% if history %}
+    <div class="table-wrapper">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Donor</th>
+                <th>Patient</th>
+                <th>Hospital</th>
+                <th>Units</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for h in history %}
+            <tr>
+                <td>{{ h.donor_name }}</td>
+                <td>{{ h.patient_name }}</td>
+                <td>{{ h.hospital }}</td>
+                <td>{{ h.units }}</td>
+                <td>{{ h.date[:10] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    {% else %}
+    <p>No donation history found.</p>
+    {% endif %}
+
+    <a href="javascript:history.back()" class="logout-link">Back</a>
+</div>
+
+{% endblock %}

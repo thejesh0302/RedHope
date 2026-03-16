@@ -7,6 +7,7 @@
     <p>Donors matching your blood request for <strong>{{ request[2] }}</strong> at <strong>{{ request[4] }}</strong>, {{ request[5] }}.</p>
 
     {% if donors %}
+    <div class="table-wrapper">
     <table class="data-table">
         <thead>
             <tr>
@@ -17,22 +18,25 @@
                 <th>Age</th>
                 <th>Weight</th>
                 <th>Hemoglobin</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
             {% for d in donors %}
             <tr>
-                <td>{{ d[0] }}</td>
-                <td>{{ d[1] }}</td>
-                <td>{{ d[2] }}</td>
-                <td>{{ d[3] }}</td>
-                <td>{{ d[4] }}</td>
-                <td>{{ d[5] }}</td>
-                <td>{{ d[6] }}</td>
+                <td>{{ d.name }}</td>
+                <td>{{ d.phone }}</td>
+                <td>{{ d.city }}</td>
+                <td>{{ d.blood_group }}</td>
+                <td>{{ d.age }}</td>
+                <td>{{ d.weight }}</td>
+                <td>{{ d.hemoglobin }}</td>
+                <td><a href="/send_request/{{ request[0] }}/{{ d.donor_id }}" class="btn btn-secondary">Request</a></td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    </div>
     {% else %}
     <p>No eligible donors found for this request in your city.</p>
     {% endif %}
