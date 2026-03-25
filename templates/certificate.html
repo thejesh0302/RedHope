@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Blood Donation Certificate - RedHope</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap');
+
+        body {
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 80px 20px 40px 20px;
+            overflow-y: auto;
+        }
+
+        .certificate-wrapper {
+            background: white;
+            width: 800px;
+            max-width: 100%;
+            padding: 60px;
+            border: 2px solid #4a4a4a;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            position: relative;
+            text-align: center;
+        }
+
+        .certificate-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border: 1px solid #c0a060;
+            pointer-events: none;
+        }
+
+        .cert-logo {
+            height: 70px;
+            width: 70px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+
+        .cert-org {
+            font-family: 'Lato', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 4px;
+            color: #4a4a4a;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+        }
+
+        .cert-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.4rem;
+            color: #8B0000;
+            margin-bottom: 6px;
+        }
+
+        .cert-subtitle {
+            font-family: 'Lato', sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 3px;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+        }
+
+        .cert-presented {
+            font-family: 'Lato', sans-serif;
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .cert-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            font-style: italic;
+            color: #2c2c2c;
+            border-bottom: 2px solid #c0a060;
+            display: inline-block;
+            padding-bottom: 8px;
+            margin-bottom: 30px;
+        }
+
+        .cert-body {
+            font-family: 'Lato', sans-serif;
+            font-size: 1rem;
+            color: #555;
+            line-height: 1.9;
+            max-width: 580px;
+            margin: 0 auto 40px auto;
+        }
+
+        .cert-body strong {
+            color: #2c2c2c;
+        }
+
+        .cert-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 50px;
+            padding-top: 20px;
+        }
+
+        .cert-date {
+            font-family: 'Lato', sans-serif;
+            font-size: 0.9rem;
+            color: #666;
+            text-align: left;
+        }
+
+        .cert-date span {
+            display: block;
+            font-weight: 700;
+            color: #2c2c2c;
+            font-size: 1rem;
+        }
+
+        .cert-seal {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #8B0000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.55rem;
+            font-family: 'Lato', sans-serif;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-align: center;
+            line-height: 1.4;
+            font-weight: 700;
+        }
+
+        .cert-sign {
+            font-family: 'Lato', sans-serif;
+            font-size: 0.9rem;
+            color: #666;
+            text-align: right;
+        }
+
+        .cert-sign span {
+            display: block;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.3rem;
+            color: #2c2c2c;
+            margin-bottom: 4px;
+        }
+
+        .actions {
+            margin-top: 30px;
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .actions {
+                display: none;
+            }
+            .certificate-wrapper {
+                box-shadow: none;
+                border: 2px solid #4a4a4a;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="certificate-wrapper" id="certificate">
+
+    <img src="{{ url_for('static', filename='images/redhope_logo.png') }}" alt="RedHope" class="cert-logo">
+    <p class="cert-org">RedHope — Blood Donation Network</p>
+
+    <h1 class="cert-title">Certificate of Appreciation</h1>
+    <p class="cert-subtitle">Blood Donation Achievement</p>
+
+    <p class="cert-presented">This certificate is proudly presented to</p>
+    <div class="cert-name">{{ cert.donor_name }}</div>
+
+    <p class="cert-body">
+        In sincere recognition and gratitude for your noble act of donating
+        <strong>{{ cert.units }} unit(s)</strong> of <strong>{{ cert.blood_group }}</strong> blood
+        at <strong>{{ cert.hospital }}</strong>, {{ cert.city }}.
+        Your selfless contribution has the power to save lives and brings hope to those in need.
+        RedHope proudly honours your compassion and courage in coming forward to make a difference.
+    </p>
+
+    <div class="cert-footer">
+        <div class="cert-date">
+            Date of Donation
+            <span>{{ cert.date }}</span>
+        </div>
+
+        <div class="cert-seal">
+            RedHope<br>Verified<br>Donor
+        </div>
+
+        <div class="cert-sign">
+            <span>RedHope</span>
+            Authorised Signatory
+        </div>
+    </div>
+
+</div>
+
+<div class="actions" style="display:flex; gap:16px; justify-content:center; align-items:center;">
+    <button onclick="window.print()" style="width:180px; height:44px; background:#8B0000; color:white; border:none; border-radius:8px; font-size:0.95rem; font-weight:600; cursor:pointer;">Print Certificate</button>
+    <a href="/donor_notifications" style="width:180px; height:44px; display:flex; align-items:center; justify-content:center; background:#f4f4f4; color:#1c1c1c; border:1.5px solid #e8e8e8; border-radius:8px; font-size:0.95rem; font-weight:600; text-decoration:none;">Back</a>
+</div>
+
+</body>
+</html>

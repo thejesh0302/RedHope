@@ -19,6 +19,8 @@ def create_tables():
         role TEXT NOT NULL,
         phone TEXT,
         city TEXT,
+        latitude REAL,
+        longitude REAL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
     """)

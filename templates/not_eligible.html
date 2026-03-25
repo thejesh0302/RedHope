@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="inner-page">
+<div class="not-eligible-box">
+    <h2>Eligibility Result</h2>
+    <div class="not-eligible-alert">
+        <strong>Not Eligible to Donate</strong>
+        <p>{{ explanation }}</p>
+    </div>
+    <a href="/donor_form" class="btn btn-primary">Update My Details</a>
+    <br><br>
+    <a href="/donor_dashboard" class="back-link">Back to Dashboard</a>
+</div>
+</div>
+{% endblock %}

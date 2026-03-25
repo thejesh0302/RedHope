@@ -1,31 +1,111 @@
 {% extends 'base.html' %}
-
 {% block content %}
 
-<div class="dashboard">
-    <h1>Welcome, {{ session['name'] }}! 👋</h1>
-    <p>You are logged in as a <strong>Donor</strong>. What would you like to do today?</p>
-
-    <div class="dashboard-cards">
-
-        <a href="/donor_form" class="dash-card">
-            <h3>🩺 Eligibility Form</h3>
-            <p>Fill or update your donor eligibility details.</p>
-        </a>
-
-        <a href="/donor_notifications" class="dash-card">
-            <h3>🩸 Blood Requests</h3>
-            <p>View and respond to blood requests sent to you.</p>
-        </a>
-
-        <a href="/donation_history" class="dash-card">
-            <h3>📋 Donation History</h3>
-            <p>View your past donation records.</p>
-        </a>
-
+<div class="dash-page">
+    <div class="dash-sidebar">
+        <img src="{{ url_for('static', filename='images/hero3.svg') }}" alt="" class="sidebar-illustration">
+        <div class="sidebar-quote">
+            <p>"Donating blood is the most precious gift you can give — the gift of life."</p>
+        </div>
+        <div class="sidebar-facts">
+            <h4>Quick Facts</h4>
+            <ul>
+                <li>Every 2 seconds someone needs blood</li>
+                <li>One donation saves up to 3 lives</li>
+                <li>Only 7% of people have O- blood</li>
+                <li>Blood cannot be manufactured</li>
+                <li>Safe to donate every 3 months</li>
+            </ul>
+        </div>
+        <div class="sidebar-facts">
+            <h4>Eligibility</h4>
+            <ul>
+                <li>Age 18–65, weight ≥ 50kg</li>
+                <li>Hemoglobin ≥ 12.5 g/dL</li>
+                <li>No donation in last 90 days</li>
+                <li>No tattoo in last 6 months</li>
+            </ul>
+        </div>
     </div>
 
-    <a href="{{ url_for('logout') }}" class="logout-link">→ Logout</a>
+    <div class="dash-main">
+        <h1>Welcome, {{ session['name'] }}!</h1>
+        <p class="dash-sub">Logged in as <strong>Donor</strong> — what would you like to do?</p>
+
+        {% if availability %}
+        <div class="avail-bar">
+            <span class="avail-label">Status:
+                {% if availability == 'Eligible' %}
+                <strong style="color: #2e7d32;">
+                    Available
+                </strong>
+                {% else %}
+                <strong style="color: #c62828;">
+                    {{ availability }}
+                </strong>
+                {% endif %}
+            </span>
+            <a href="/toggle_availability" class="btn btn-secondary" style="width:auto; padding:8px 16px; font-size:0.82rem;">
+                {% if availability == 'Eligible' %}Mark Unavailable{% else %}Mark Available{% endif %}
+            </a>
+        </div>
+        {% endif %}
+
+        <div class="dash-cards">
+            <a href="/donor_form" class="dash-card">
+                <h3>Eligibility Form</h3>
+                <p>Fill or update your health details and check donation eligibility.</p>
+            </a>
+            <a href="/donor_notifications" class="dash-card">
+                <h3>Blood Requests</h3>
+                <p>View and respond to blood requests sent to you by patients.</p>
+            </a>
+            <a href="/donation_history" class="dash-card">
+                <h3>Donation History</h3>
+                <p>View all recorded donations in the system.</p>
+            </a>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-box">
+                <span class="stat-num">4.5M</span>
+                <span class="stat-label">Units needed daily in India</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-num">3</span>
+                <span class="stat-label">Lives saved per donation</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-num">90</span>
+                <span class="stat-label">Days between donations</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-num">42</span>
+                <span class="stat-label">Days blood can be stored</span>
+            </div>
+        </div>
+
+        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 30px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 20px;">
+            <div>
+                <h3 style="margin-bottom: 12px; font-size: 1.2rem; display: flex; align-items: center; gap: 8px;">
+                    <img src="{{ url_for('static', filename='images/redhope_logo.png') }}" style="height: 24px; transform: scale(1.5);"> Donate Today
+                </h3>
+                <p style="color: var(--gray); font-size: 0.95rem; line-height: 1.6;">Your healthy choices and commitment directly translate into lives saved across our nationwide hospital network.</p>
+            </div>
+            <img src="{{ url_for('static', filename='images/hero_donor.png') }}" style="height: 140px; border-radius: 8px; object-fit: contain;">
+        </div>
+
+        <div class="info-banner">
+            <h3>Why Your Donation Matters</h3>
+            <p>India faces a shortage of approximately 3 million units of blood every year. Patients undergoing surgery, cancer treatment, and trauma victims depend entirely on voluntary donors. By donating today, you directly contribute to saving lives in your community.</p>
+        </div>
+
+        <div class="emergency-box">
+            <h3>Blood Donation Helpline</h3>
+            <p>National Blood Transfusion Council (NBTC): <strong>1800-180-1104</strong></p>
+            <p>Available 24/7 for blood donation queries and emergencies.</p>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

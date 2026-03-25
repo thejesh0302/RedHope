@@ -1,26 +1,37 @@
 {% extends 'base.html' %}
-
 {% block content %}
 
-<div class="card">
-    <h2>🩸 Welcome Back</h2>
-
-    <form method="POST" action="/login">
-        <div class="form-group">
-            <label>Email Address</label>
-            <input type="email" name="email" placeholder="Enter your email" required>
+<div class="auth-page">
+    <div class="auth-left">
+        <div class="auth-left-inner">
+            <h1>Every Drop<br>Counts</h1>
+            <p>Join RedHope and help connect donors with patients in need. Your one donation can save up to three lives.
+            </p>
+            <img src="{{ url_for('static', filename='images/hero.svg') }}" alt="" class="hero-svg">
         </div>
-
-        <div class="form-group">
-            <label>Password</label>
-            <input type="password" name="password" placeholder="Enter your password" required>
+    </div>
+    <div class="auth-right">
+        <div class="auth-box">
+            <div style="text-align: center;">
+                <img src="{{ url_for('static', filename='images/redhope_logo.png') }}" alt="RedHope" style="height: 80px; object-fit: contain; transform: scale(1.9); margin-bottom: 25px;">
+                <h2>Welcome to <span style="color:#8B0000;">Red</span>Hope</h2>
+                <p class="auth-sub">Sign in to your RedHope account</p>
+            </div>
+            <form method="POST" action="/login" onsubmit="sessionStorage.setItem('tab_session_active', 'true');">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" name="email" placeholder="you@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Sign In</button>
+            </form>
+            <div class="link-text">
+                Don't have an account? <a href="/signup">Create one</a>
+            </div>
         </div>
-
-        <button type="submit" class="btn btn-primary">Login</button>
-    </form>
-
-    <div class="link-text">
-        Don't have an account? <a href="/signup">Sign Up</a>
     </div>
 </div>
 

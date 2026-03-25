@@ -1,107 +1,89 @@
 {% extends 'base.html' %}
-
 {% block content %}
-
+<div class="inner-page">
 <div class="form-card">
-    <h2>Donor Eligibility Form</h2>
-
+    <h2>Eligibility Form</h2>
+    <p class="form-sub">Fill in your health details to check your donation eligibility.</p>
     <form method="POST">
-
         <div class="form-row">
             <div class="form-group">
                 <label>Blood Group</label>
                 <select name="blood_group" required>
                     <option value="">Select</option>
-                    <option value="A+">A+</option>
-                    <option value="A-">A-</option>
-                    <option value="B+">B+</option>
-                    <option value="B-">B-</option>
-                    <option value="AB+">AB+</option>
-                    <option value="AB-">AB-</option>
-                    <option value="O+">O+</option>
-                    <option value="O-">O-</option>
+                    <option>A+</option><option>A-</option>
+                    <option>B+</option><option>B-</option>
+                    <option>AB+</option><option>AB-</option>
+                    <option>O+</option><option>O-</option>
                 </select>
             </div>
-
             <div class="form-group">
                 <label>Age</label>
                 <input type="number" name="age" placeholder="Your age" required>
             </div>
         </div>
-
         <div class="form-row">
             <div class="form-group">
                 <label>Weight (kg)</label>
-                <input type="number" name="weight" step="0.1" placeholder="Your weight">
+                <input type="number" name="weight" step="0.1" placeholder="e.g. 65" required>
             </div>
-
             <div class="form-group">
-                <label>Hemoglobin Level</label>
+                <label>Hemoglobin (g/dL)</label>
                 <input type="number" name="hemoglobin" step="0.1" placeholder="e.g. 13.5" required>
             </div>
         </div>
-
         <div class="form-group">
             <label>Last Donation Date</label>
             <input type="date" name="last_donation_date">
+            <small style="color:#888; font-size: 0.75rem;">(Leave blank if first time donor)</small>
         </div>
-
-        <div class="form-row">
-            <div class="form-group">
-                <label>Available From</label>
-                <input type="time" name="available_from" required>
-            </div>
-
-            <div class="form-group">
-                <label>Available To</label>
-                <input type="time" name="available_to" required>
-            </div>
-        </div>
-
         <div class="form-group">
-            <label>Medical Conditions (if any)</label>
-            <input type="text" name="medical_conditions" placeholder="e.g. None, Diabetes, etc.">
+            <label>Medical Conditions</label>
+            <input type="text" name="medical_conditions" placeholder="e.g. None, Diabetes" required>
         </div>
-
         <div class="form-row">
             <div class="form-group">
-                <label>Currently on Medication?</label>
+                <label>On Medication?</label>
                 <select name="medication" required>
                     <option value="No">No</option>
                     <option value="Yes">Yes</option>
                 </select>
             </div>
-
             <div class="form-group">
-                <label>Any Chronic Disease?</label>
+                <label>Chronic Disease?</label>
                 <select name="chronic_disease" required>
                     <option value="No">No</option>
                     <option value="Yes">Yes</option>
                 </select>
             </div>
         </div>
-
         <div class="form-row">
             <div class="form-group">
-                <label>Tattoo in Last 6 Months?</label>
+                <label>Tattoo (last 6 months)?</label>
                 <select name="tattoo_recent" required>
                     <option value="No">No</option>
                     <option value="Yes">Yes</option>
                 </select>
             </div>
-
             <div class="form-group">
-                <label>Alcohol in Last 24 Hours?</label>
+                <label>Alcohol (last 24hrs)?</label>
                 <select name="alcohol_recent" required>
                     <option value="No">No</option>
                     <option value="Yes">Yes</option>
                 </select>
             </div>
         </div>
-
-        <button type="submit" class="btn btn-primary">Submit</button>
-
+        <div class="form-row">
+            <div class="form-group">
+                <label>Available From</label>
+                <input type="time" name="available_from" required>
+            </div>
+            <div class="form-group">
+                <label>Available To</label>
+                <input type="time" name="available_to" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Check Eligibility</button>
     </form>
 </div>
-
+</div>
 {% endblock %}

@@ -1,31 +1,83 @@
 {% extends 'base.html' %}
-
 {% block content %}
 
-<div class="dashboard">
-    <h1>Welcome, {{ session['name'] }}!</h1>
-    <p>You are logged in as a <strong>Patient</strong>. What would you like to do today?</p>
-
-    <div class="dashboard-cards">
-
-        <a href="/blood_request_form" class="dash-card">
-            <h3>Request Blood</h3>
-            <p>Submit a new blood request for your hospital.</p>
-        </a>
-
-        <a href="/my_requests" class="dash-card">
-            <h3>My Requests</h3>
-            <p>Track the status of your blood requests and find matched donors.</p>
-        </a>
-
-        <a href="/donation_history" class="dash-card">
-            <h3>Donation History</h3>
-            <p>View all donation records in the system.</p>
-        </a>
-
+<div class="dash-page">
+    <div class="dash-sidebar">
+        <img src="{{ url_for('static', filename='images/hero4.svg') }}" alt="" class="sidebar-illustration">
+        <div class="sidebar-quote">
+            <p>"The blood you donate gives someone another chance at life. One day that someone may be you."</p>
+        </div>
+        <div class="sidebar-facts">
+            <h4>Quick Facts</h4>
+            <ul>
+                <li>Every 2 seconds someone needs blood</li>
+                <li>One donation saves up to 3 lives</li>
+                <li>Only 7% of people have O- blood</li>
+                <li>Blood cannot be manufactured</li>
+                <li>Safe to donate every 3 months</li>
+            </ul>
+        </div>
     </div>
 
-    <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+    <div class="dash-main">
+        <h1>Welcome, {{ session['name'] }}!</h1>
+        <p class="dash-sub">Logged in as <strong>Patient</strong> — what would you like to do?</p>
+
+        <div class="dash-cards">
+            <a href="/blood_request_form" class="dash-card">
+                <h3>Request Blood</h3>
+                <p>Submit a new blood request and find matched donors near you.</p>
+            </a>
+            <a href="/my_requests" class="dash-card">
+                <h3>My Requests</h3>
+                <p>Track your submitted requests and connect with matched donors.</p>
+            </a>
+            <a href="/donation_history" class="dash-card">
+                <h3>Donation History</h3>
+                <p>View all donation records in the system.</p>
+            </a>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-box">
+                <span class="stat-num">8</span>
+                <span class="stat-label">Blood groups available</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-num">24/7</span>
+                <span class="stat-label">RedHope matching system</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-num">5</span>
+                <span class="stat-label">Top donors shown per request</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-num">100%</span>
+                <span class="stat-label">Voluntary donors only</span>
+            </div>
+        </div>
+
+        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 30px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 20px;">
+            <div>
+                <h3 style="margin-bottom: 12px; font-size: 1.2rem; display: flex; align-items: center; gap: 8px;">
+                    <img src="{{ url_for('static', filename='images/redhope_logo.png') }}" style="height: 24px; transform: scale(1.5);"> Medical Support
+                </h3>
+                <p style="color: var(--gray); font-size: 0.95rem; line-height: 1.6;">Our doctors and blood banks work around the clock to ensure safe matching and immediate delivery for your needs.</p>
+            </div>
+            <img src="{{ url_for('static', filename='images/hero_doctor.png') }}" style="height: 140px; border-radius: 8px; object-fit: contain;">
+        </div>
+
+        <div class="info-banner">
+            <h3>How RedHope Helps You</h3>
+            <p>RedHope matches you with eligible donors based on blood group, location, and time availability. Submit a request, select a matched donor, and coordinate your donation — all in one place. Our system prioritises critical requests to ensure the most urgent cases are handled first.</p>
+        </div>
+
+        <div class="emergency-box">
+            <h3>Blood Donation Helpline</h3>
+            <p>National Blood Transfusion Council (NBTC): <strong>1800-180-1104</strong></p>
+            <p>Available 24/7 for blood donation queries and emergencies.</p>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

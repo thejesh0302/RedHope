@@ -1,24 +1,16 @@
 {% extends 'base.html' %}
-
 {% block content %}
-
-<div class="dashboard">
+<div class="inner-page">
+<div class="table-page" style="padding-top: 20px;">
     <h1>Blood Requests for You</h1>
-    <p>Patients who have requested your blood. Accept or reject each request.</p>
-
+    <p class="page-sub">Patients who have requested your blood. Accept or reject each request.</p>
     {% if notifications %}
     <div class="table-wrapper">
     <table class="data-table">
         <thead>
             <tr>
-                <th>Patient</th>
-                <th>Blood Group</th>
-                <th>Units</th>
-                <th>Hospital</th>
-                <th>City</th>
-                <th>Urgency</th>
-                <th>Status</th>
-                <th>Action</th>
+                <th>Patient</th><th>Blood Group</th><th>Units</th>
+                <th>Hospital</th><th>City</th><th>Urgency</th><th>Status</th><th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -30,13 +22,15 @@
                 <td>{{ n[4] }}</td>
                 <td>{{ n[5] }}</td>
                 <td>{{ n[6] }}</td>
-                <td>{{ n[9] }}</td>
+                <td>{{ n[8] }}</td>
                 <td>
-                    {% if n[9] == 'Pending' %}
-                    <a href="/respond_request/{{ n[10] }}/accept" class="btn btn-primary" style="width:auto; margin-right:6px;">Accept</a>
-                    <a href="/respond_request/{{ n[10] }}/reject" class="btn btn-secondary">Reject</a>
+                    {% if n[8] == 'Pending' %}
+                    <a href="/respond_request/{{ n[10] }}/accept" class="btn btn-primary" style="width:auto; padding:6px 14px; font-size:0.82rem; margin-right:4px;">Accept</a>
+                    <a href="/respond_request/{{ n[10] }}/reject" class="btn btn-secondary" style="width:auto; padding:6px 14px; font-size:0.82rem;">Reject</a>
+                    {% elif n[8] == 'Accepted' %}
+                    <a href="/certificate/{{ n[10] }}" class="btn btn-primary" style="width:auto; padding:6px 14px; font-size:0.82rem;">Certificate</a>
                     {% else %}
-                    {{ n[9] }}
+                    {{ n[8] }}
                     {% endif %}
                 </td>
             </tr>
@@ -47,8 +41,7 @@
     {% else %}
     <p>No requests received yet.</p>
     {% endif %}
-
-    <a href="javascript:history.back()" class="logout-link">Back</a>
+    <a href="javascript:history.back()" class="back-link">Back</a>
 </div>
-
+</div>
 {% endblock %}

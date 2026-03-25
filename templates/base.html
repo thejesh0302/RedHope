@@ -1,23 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>RedHope</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
 <nav>
     <div class="brand">
-        <img src="{{ url_for('static', filename='images/redhope_logo.png') }}" alt="RedHope Logo">
+        <a href="/">
+            <img src="{{ url_for('static', filename='images/redhope_name_logo.png') }}" alt="RedHope">
+        </a>
     </div>
     <div class="nav-links">
-        <a href="/">Home</a>
-        <a href="/login">Login</a>
-        <a href="/signup">Sign Up</a>
+        {% if session.get('user_id') %}
+            {% set dash_paths = ['/donor_dashboard', '/patient_dashboard'] %}
+            {% if request.path not in dash_paths %}
+                <a href="/">Home</a>
+            {% endif %}
+            <a href="/logout" class="nav-btn">Logout</a>
+        {% else %}
+            {% if request.path == '/signup' %}
+                <a href="/login">Login</a>
+            {% else %}
+                <a href="/signup" class="nav-btn">Sign Up</a>
+            {% endif %}
+        {% endif %}
     </div>
 </nav>
 
-<div class="flash-messages">
+<div class="flash-wrap">
 {% with messages = get_flashed_messages() %}
   {% if messages %}
     {% for message in messages %}
@@ -27,8 +41,19 @@
 {% endwith %}
 </div>
 
-{% block content %}
-{% endblock %}
+{% block content %}{% endblock %}
+
+{% if session.get('user_id') %}
+<script>
+    if (!sessionStorage.getItem('tab_session_active')) {
+        window.location.href = '/logout';
+    }
+</script>
+{% else %}
+<script>
+    sessionStorage.removeItem('tab_session_active');
+</script>
+{% endif %}
 
 </body>
 </html>

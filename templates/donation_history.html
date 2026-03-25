@@ -1,21 +1,20 @@
 {% extends 'base.html' %}
-
 {% block content %}
-
-<div class="dashboard">
-    <h1>Donation History</h1>
-    <p>Record of all donations made through RedHope.</p>
-
+<div class="inner-page">
+<div class="table-page">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px;">
+        <div>
+            <h1 style="margin-bottom: 8px;">Donation History</h1>
+            <p class="page-sub" style="margin-bottom: 0;">Record of all donations made through RedHope.</p>
+        </div>
+        <img src="{{ url_for('static', filename='images/hero6.svg') }}" alt="History" style="height: 120px;">
+    </div>
     {% if history %}
     <div class="table-wrapper">
     <table class="data-table">
         <thead>
             <tr>
-                <th>Donor</th>
-                <th>Patient</th>
-                <th>Hospital</th>
-                <th>Units</th>
-                <th>Date</th>
+                <th>Donor</th><th>Patient</th><th>Hospital</th><th>Units</th><th>Date</th>
             </tr>
         </thead>
         <tbody>
@@ -34,8 +33,7 @@
     {% else %}
     <p>No donation history found.</p>
     {% endif %}
-
-    <a href="javascript:history.back()" class="logout-link">Back</a>
+    <a href="javascript:history.back()" class="back-link">Back</a>
 </div>
-
+</div>
 {% endblock %}
