@@ -274,8 +274,8 @@ RedHope uses the **Groq API** with the `llama-3.3-70b-versatile` model to genera
 |---|---|
 | Login | ![Login](screenshots/Login%20Page.png) |
 | Donor Dashboard | ![Donor Dashboard](screenshots/Donor%20Dashboard.png) |
-| Eligibility Form | ![Eligibility Form](screenshots/Donor%20Page.png) |
-| Patient Dashboard | ![Patient Dashboard](screenshots/Patient%20(Requests)%20Dash....png) |
+| Eligibility Form | ![Eligibility Form](screenshots/Donor%20Form.png) |
+| Patient Dashboard | ![Patient Dashboard](screenshots/Patient%20(Requests)%20Dashboard.png) |
 | Blood Request Form | ![Blood Request Form](screenshots/Blood%20Request%20Form.png) |
 | Sign Up | ![Sign Up](screenshots/Sign%20Up%20Page.png) |
 
